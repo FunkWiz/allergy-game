@@ -34,7 +34,7 @@ const Container = styled.div`
     left: 0;
     will-change: transform;
     backface-visibility: hidden;
-    
+    z-index: 10;
     img {
         width: 100%;
     }
@@ -57,7 +57,7 @@ const Food: FunctionComponent<Props> = ({ basketRef, foodDetails: { imageUrl, al
     const hitRangeRef = useRef<HTMLDivElement>(null);
 
     const foodImage = useMemo(() => require(`../resources/${imageUrl}`), [imageUrl]);
-    const {currentCharacter, takeHit} = GameStore;
+    const {currentCharacter, takeHit, addGamePoint} = GameStore;
 
     useEffect(() => {
         setXPos(getRandomXPosition(foodRef.current) || 0);
@@ -73,6 +73,8 @@ const Food: FunctionComponent<Props> = ({ basketRef, foodDetails: { imageUrl, al
         if (isCollide(basketRef.current.getBoundingClientRect(), hitRangeRef.current.getBoundingClientRect())) {
             if(currentCharacter!.allergies.includes(allergy)) {
                 takeHit();
+            } else {
+                addGamePoint();
             }
             setVanish(true);
             return;

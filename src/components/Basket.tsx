@@ -1,17 +1,14 @@
-import React, { forwardRef, useEffect, useState, useCallback, useRef } from 'react';
+import React, { forwardRef, useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import styled from 'styled-components';
 import basketImage from '../resources/basket.png';
+import { Character } from '../stores/GameStore';
 
 const Container = styled.div`
     position: absolute;
-    bottom: 100px;
+    bottom: 0;
     left: 0;
     will-change: transform;
     backface-visibility: hidden;
-    img {
-        width: 131px;
-        transform: translate3d(0, -35px, 0);
-    }
 `;
 
 const HitRange = styled.div`
@@ -22,9 +19,24 @@ const HitRange = styled.div`
     height: 1px;
 `;
 
+const CharacterImage = styled.img`
+    width: 202px;
+    position: absolute;
+    top: -240px;
+    left: -35px;
+`;
+
+const BasketImage = styled.img`
+    width: 131px;
+    transform: translate3d(0, -35px, 0);
+    z-index: 1;
+    position: relative;
+`;
+
 const moveFactor = 3;
 
-const Basket = (_: any, ref: any) => {
+const Basket = (props: any, ref: any) => {
+    const currentCharacter = props.currentCharacter as Character;
     const [xPos, setPosition] = useState(0);
     const [moveDirection, setMoveDirection] = useState<'right' | 'left'>('right');
     const basketRef = useRef<HTMLDivElement>(null);
@@ -57,12 +69,18 @@ const Basket = (_: any, ref: any) => {
             window.removeEventListener('click', toggleDirection);
         }
     }, [toggleDirection])
+
+    const charImage = useMemo(() => currentCharacter ?
+        require(`../resources/${currentCharacter.imagePrefix}-hold.png`) : '',
+        [currentCharacter]);
+
     return (
         <Container ref={basketRef} style={{
             transform: `translate3d(${xPos}px, 0, 0)`
         }}>
             <HitRange ref={ref} />
-            <img src={basketImage} alt='' />
+            <BasketImage src={basketImage} alt='' />
+            <CharacterImage src={charImage} style={currentCharacter.customHoldStyle} />
         </Container>
     )
 }

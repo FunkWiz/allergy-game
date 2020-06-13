@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 const HealthPointsContainer = styled.div`
     display: flex;
-    padding:10px 10px 0 0;
+    padding:10px;
     position: absolute;
     top: 0;
     right: 0;
@@ -15,6 +15,20 @@ const HealthPointsContainer = styled.div`
 const HealthPoint = styled.div`
     margin: 0 5px;
     color: red;
+`;
+
+const GamePointsContainer = styled.div`
+    color: #000;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+`;
+
+const Container = styled.div`
+    overflow: hidden;
 `;
 
 const InGame: FunctionComponent = () => {
@@ -40,19 +54,22 @@ const InGame: FunctionComponent = () => {
     const healthPointsArray = useMemo(() => Array.from(Array(GameStore.healthPoints)), [GameStore.healthPoints]);
 
     return (
-        <div>
+        <Container>
             <HealthPointsContainer>
                 {healthPointsArray.map((_, index) => (
                     <HealthPoint key={index}>❤</HealthPoint>
                 ))}
             </HealthPointsContainer>
+            <GamePointsContainer>
+                {`${GameStore.gamePoints} / ${GameStore.maxGamePoints}`}
+            </GamePointsContainer>
             <div>
                 {gameFoods.map((foodDetails, index) => (
                     <Food basketRef={basketRef} foodDetails={foodDetails} key={index} />
                 ))}
             </div>
-            <Basket ref={basketRef} />
-        </div>
+            <Basket ref={basketRef} currentCharacter={GameStore.currentCharacter} />
+        </Container>
     )
 }
 

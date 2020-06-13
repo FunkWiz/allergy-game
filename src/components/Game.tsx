@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import GameStore, { Stage } from '../stores/GameStore';
 import Start from './stages/Start';
 import InGame from './stages/InGame';
@@ -20,9 +20,13 @@ const stageToComponent: { [key in Stage]: FunctionComponent } = {
 }
 
 const Game: FunctionComponent = () => {
-    const { currentStage } = GameStore;
-
+    const { currentStage, shouldEndGame, setStage, reset } = GameStore;
     const StageComponent = stageToComponent[currentStage];
+
+    useEffect(() => {
+        setStage('start');
+        reset();
+    }, [shouldEndGame]);
 
     return (
         <Container>

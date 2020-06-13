@@ -11,6 +11,11 @@ const GlobalStyle = createGlobalStyle`
     color: #fff;
     font-size: 16px;
     overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 `;
 

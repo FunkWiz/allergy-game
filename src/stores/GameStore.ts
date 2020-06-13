@@ -1,4 +1,5 @@
-import { observable, action } from "mobx";
+import { observable, action, computed } from "mobx";
+import { resetGlobalState } from "mobx/lib/internal";
 
 export type Stage = "start" | "character-selection" | "in-game";
 
@@ -10,6 +11,7 @@ export type Character = {
   allergies: Allergy[];
   imagePrefix: string;
   customSelectImageWidth?: string;
+  customHoldStyle?: any;
 };
 
 export type FoodDetails = {
@@ -19,11 +21,13 @@ export type FoodDetails = {
 
 class GameStore {
   @observable currentStage: Stage = "start";
-  @observable currentCharacter?: Character;
   @observable healthPoints = 3;
+  maxGamePoints = 30;
+  @observable gamePoints = 0;
   @action setStage = (stage: Stage) => (this.currentStage = stage);
   @action setCurrentCharacter = (characterId: string) => {
-    this.currentCharacter = this.characters.find(x => x.id === characterId);
+    this.currentCharacter =
+      this.characters.find(x => x.id === characterId) || this.characters[0];
   };
 
   foods: FoodDetails[] = [
@@ -81,7 +85,7 @@ class GameStore {
     {
       id: "1",
       name: "Lorin",
-      allergies: ["peanuts", 'lactose'],
+      allergies: ["peanuts", "lactose"],
       imagePrefix: "player-1"
     },
     {
@@ -95,14 +99,37 @@ class GameStore {
       name: "Sorin",
       allergies: ["peanuts"],
       imagePrefix: "player-3",
-      customSelectImageWidth: "70px"
+      customSelectImageWidth: "70px",
+      customHoldStyle: {
+        top: '-186px'
+      }
     }
   ];
+
+  @observable currentCharacter: Character = this.characters[0];
 
   @action
   takeHit = () => {
     if (this.healthPoints === 0) return;
     this.healthPoints = this.healthPoints - 1;
+  };
+
+  @action
+  addGamePoint = () => {
+    if (this.gamePoints >= this.maxGamePoints) return;
+    this.gamePoints = this.gamePoints + 1;
+  };
+
+  @action
+  reset = () => {
+    this.currentCharacter = this.characters[0];
+    this.healthPoints = 3;
+    this.gamePoints = 0;
+  }
+
+  @computed
+  get shouldEndGame() {
+    return this.healthPoints === 0 || this.gamePoints >= this.maxGamePoints;
   }
 }
 
