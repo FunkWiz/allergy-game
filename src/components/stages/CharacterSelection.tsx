@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useCallback, useContext, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
-import { CarouselProvider, Slider, Slide, CarouselContext } from 'pure-react-carousel';
+import { CarouselProvider, Slider, Slide, CarouselContext, ButtonNext, ButtonBack } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import { observer } from 'mobx-react-lite';
 import GameStore, { Character, FoodDetails } from '../../stores/GameStore';
@@ -18,18 +18,18 @@ const ItemContainer = styled.div`
 const ItemTitle = styled.div`
     font-size: 30px;
     color: #000;
-    margin: 20px 0 70px;
+    margin: 20px 0 20px;
 `;
 
 const ItemDescription = styled.div`
     font-size: 26px;
-    line-height: 30px;
+    line-height: 20px;
     color: #000;
     margin-bottom: 20px;
 `;
 
 const FoodsContainer = styled.div`
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     img {
         max-width: 50px;
     }
@@ -52,12 +52,6 @@ const SelectButton = styled.button`
     letter-spacing: 2px;
 `;
 
-const allergyMap: any = {
-    'lactose': 'Lactose',
-    'glutten': 'Glutten',
-    'peanuts': 'Peanuts'
-}
-
 const CharacterItem: FunctionComponent<{ item: Character; foods: FoodDetails[]; }> = ({ foods, item: { name, age, allergies, imagePrefix, customSelectImageWidth } }) => {
     const allergyFoods = useMemo(() => foods.filter(f => allergies.includes(f.allergy)), [allergies, foods]);
     return (
@@ -67,11 +61,11 @@ const CharacterItem: FunctionComponent<{ item: Character; foods: FoodDetails[]; 
                 {`
                     Age: ${age}
                 `} <br /><br />
-                ALLERGIES:
+                <span>ALLERGIES:</span>
             </ItemDescription>
             <FoodsContainer>
-                {allergyFoods.map(a => (
-                    <img src={require(`../../resources/${a.imageUrl}`)} alt='' />
+                {allergyFoods.map((a, index) => (
+                    <img src={require(`../../resources/${a.imageUrl}`)} key={index} alt='' />
                 ))}
             </FoodsContainer>
             <img alt='' src={require(`../../resources/${imagePrefix}-select.png`)} style={{ maxWidth: customSelectImageWidth }} />
@@ -81,6 +75,36 @@ const CharacterItem: FunctionComponent<{ item: Character; foods: FoodDetails[]; 
 
 const Container = styled.div`
     height: 400px;
+
+    .btn-next, .btn-back {
+        position: absolute;
+        top: 120px;
+        bottom :0;
+        margin: auto 10px;
+
+        display:inline-block;
+        border: 0;
+        padding: 5px;
+
+        background-color: rgb(173, 65, 65);
+        cursor: pointer;
+        color: #fff;
+        font-size: 28px;
+        font-weight: 600;
+        border-radius: 18px;
+        outline: none;
+        letter-spacing: 2px;
+        height:70px;
+        z-index:100;
+    }
+
+    .btn-next {
+        right: 15px;
+    }
+    
+    .btn-back {
+        left: 15px;
+    }
 `;
 
 const CarouselSlider: FunctionComponent<{ items: Character[]; onChange: (index: number) => void; foods: FoodDetails[] }> = ({ items, onChange, foods }) => {
@@ -116,7 +140,7 @@ const CharacterSelection: FunctionComponent = () => {
         GameStore.setCurrentCharacter(characters[index].id);
     }, [characters]);
     const handleSelect = useCallback(() => {
-        GameStore.setStage('in-game');
+        GameStore.setStage('countdown');
     }, []);
 
     return (
@@ -127,7 +151,11 @@ const CharacterSelection: FunctionComponent = () => {
                 naturalSlideHeight={400}
                 naturalSlideWidth={150}
                 totalSlides={characters.length}>
-                <CarouselSlider items={characters} onChange={handleChange} foods={GameStore.foods} />
+                <>
+                    <ButtonBack className="btn-back">{`<`}</ButtonBack>
+                    <ButtonNext className='btn-next'>></ButtonNext>
+                    <CarouselSlider items={characters} onChange={handleChange} foods={GameStore.foods} />
+                </>
             </CarouselProvider>
         </Container>
     )

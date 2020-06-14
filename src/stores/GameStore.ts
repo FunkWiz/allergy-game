@@ -1,7 +1,6 @@
 import { observable, action, computed } from "mobx";
-import { resetGlobalState } from "mobx/lib/internal";
 
-export type Stage = "start" | "character-selection" | "in-game";
+export type Stage = "start" | "character-selection" | "in-game" | "countdown" | "final";
 
 export type Allergy = "peanuts" | "glutten" | "lactose" | "neutral";
 
@@ -23,7 +22,7 @@ export type FoodDetails = {
 class GameStore {
   @observable currentStage: Stage = "start";
   @observable healthPoints = 3;
-  maxGamePoints = 10;
+  maxGamePoints = 15;
   @observable gamePoints = 0;
   @action setStage = (stage: Stage) => (this.currentStage = stage);
   @action setCurrentCharacter = (characterId: string) => {
