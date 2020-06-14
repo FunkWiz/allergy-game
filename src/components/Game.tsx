@@ -24,6 +24,7 @@ const Game: FunctionComponent = () => {
     const StageComponent = stageToComponent[currentStage];
 
     useEffect(() => {
+        if(!shouldEndGame) return;
         setStage('start');
         reset();
     }, [shouldEndGame]);

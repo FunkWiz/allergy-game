@@ -12,6 +12,7 @@ export type Character = {
   imagePrefix: string;
   customSelectImageWidth?: string;
   customHoldStyle?: any;
+  age: number;
 };
 
 export type FoodDetails = {
@@ -22,7 +23,7 @@ export type FoodDetails = {
 class GameStore {
   @observable currentStage: Stage = "start";
   @observable healthPoints = 3;
-  maxGamePoints = 30;
+  maxGamePoints = 10;
   @observable gamePoints = 0;
   @action setStage = (stage: Stage) => (this.currentStage = stage);
   @action setCurrentCharacter = (characterId: string) => {
@@ -37,15 +38,7 @@ class GameStore {
     },
     {
       allergy: "neutral",
-      imageUrl: "carrot.png"
-    },
-    {
-      allergy: "neutral",
       imageUrl: "banana.png"
-    },
-    {
-      allergy: "neutral",
-      imageUrl: "strawberry.png"
     },
     {
       allergy: "peanuts",
@@ -85,24 +78,30 @@ class GameStore {
     {
       id: "1",
       name: "Lorin",
-      allergies: ["peanuts", "lactose"],
-      imagePrefix: "player-1"
+      allergies: ["peanuts"],
+      imagePrefix: "player-1",
+      age: 24,
     },
     {
       id: "2",
       name: "Dorin",
-      allergies: ["peanuts"],
-      imagePrefix: "player-2"
+      allergies: ["glutten"],
+      imagePrefix: "player-2",
+      customHoldStyle: {
+        bottom: '-237px'
+      },
+      age: 30
     },
     {
       id: "3",
       name: "Sorin",
-      allergies: ["peanuts"],
+      allergies: ["lactose"],
       imagePrefix: "player-3",
       customSelectImageWidth: "70px",
       customHoldStyle: {
-        top: '-186px'
-      }
+        bottom: '-390px'
+      },
+      age: 21
     }
   ];
 

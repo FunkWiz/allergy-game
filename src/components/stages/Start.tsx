@@ -2,6 +2,7 @@ import React, { FunctionComponent, useCallback } from 'react';
 import styled from 'styled-components';
 import GameStore from '../../stores/GameStore';
 import {observer} from 'mobx-react-lite';
+import gameLogo from '../../resources/gamelogo.png';
 
 const Container = styled.div`
     height: 100vh;
@@ -27,6 +28,21 @@ const StartButton = styled.button`
     letter-spacing: 2px;
 `;
 
+const GameLogoContainer = styled.div`
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-top: 80px;
+    text-align: center;
+    justify-content: center;
+
+    img {
+        max-width: 330px;
+    }
+`;
+
 const Start: FunctionComponent = () => {
     const handleClick = useCallback(() => {
         GameStore.setStage('character-selection');
@@ -34,6 +50,9 @@ const Start: FunctionComponent = () => {
 
     return (
         <Container>
+            <GameLogoContainer>
+                <img src={gameLogo} />
+            </GameLogoContainer>
             <StartButton onClick={handleClick}>Start</StartButton>
         </Container>
     )

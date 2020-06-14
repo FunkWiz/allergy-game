@@ -34,10 +34,11 @@ const Container = styled.div`
     left: 0;
     will-change: transform;
     backface-visibility: hidden;
-    z-index: 10;
+    z-index: 11;
     img {
         width: 100%;
     }
+    transition: opacity .4s;
 `;
 
 const HitRange = styled.div`
@@ -55,15 +56,15 @@ const Food: FunctionComponent<Props> = ({ basketRef, foodDetails: { imageUrl, al
     const [didStart, setDidStart] = useState(false);
     const foodRef = useRef<HTMLDivElement>(null);
     const hitRangeRef = useRef<HTMLDivElement>(null);
-
     const foodImage = useMemo(() => require(`../resources/${imageUrl}`), [imageUrl]);
-    const {currentCharacter, takeHit, addGamePoint} = GameStore;
+    const { currentCharacter, takeHit, addGamePoint } = GameStore;
+    const isAllergic = useMemo(() => currentCharacter!.allergies.includes(allergy), [currentCharacter!.allergies, allergy])
 
     useEffect(() => {
         setXPos(getRandomXPosition(foodRef.current) || 0);
     }, []);
     useEffect(() => {
-        if (!basketRef.current || !foodRef.current || !hitRangeRef.current) return;
+        if (!basketRef.current || !foodRef.current || !hitRangeRef.current || vanish) return;
 
         if (yPos > window.innerHeight) {
             setVanish(true);
@@ -71,8 +72,11 @@ const Food: FunctionComponent<Props> = ({ basketRef, foodDetails: { imageUrl, al
         }
 
         if (isCollide(basketRef.current.getBoundingClientRect(), hitRangeRef.current.getBoundingClientRect())) {
-            if(currentCharacter!.allergies.includes(allergy)) {
+            if (isAllergic) {
                 takeHit();
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(200);
+                }
             } else {
                 addGamePoint();
             }
@@ -91,12 +95,11 @@ const Food: FunctionComponent<Props> = ({ basketRef, foodDetails: { imageUrl, al
         return () => cancelAnimationFrame(animationRef);
     }, [yPos, basketRef, didStart]);
 
-    if (vanish) return null;
-
     return (
         <Container ref={foodRef} style={{
             transform: `translate3d(${xPos}px, ${yPos}px, 0)`,
-            display: didStart ? 'block' : 'none'
+            display: didStart ? 'block' : 'none',
+            opacity: vanish ? 0 : 1
         }}>
             <HitRange ref={hitRangeRef} />
             <img src={foodImage} alt='' />

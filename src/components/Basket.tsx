@@ -9,6 +9,7 @@ const Container = styled.div`
     left: 0;
     will-change: transform;
     backface-visibility: hidden;
+    z-index: 100;
 `;
 
 const HitRange = styled.div`
@@ -21,15 +22,19 @@ const HitRange = styled.div`
 
 const CharacterImage = styled.img`
     width: 202px;
-    position: absolute;
-    top: -240px;
+    bottom: -338px;
     left: -35px;
+
+    position: absolute;
+    will-change: transform;
+    backface-visibility: hidden;
+    display: block;
+    z-index: 10;
 `;
 
 const BasketImage = styled.img`
     width: 131px;
     transform: translate3d(0, -35px, 0);
-    z-index: 1;
     position: relative;
 `;
 
@@ -43,10 +48,10 @@ const Basket = (props: any, ref: any) => {
 
     useEffect(() => {
         const num = requestAnimationFrame(() => {
-            if(!basketRef || !basketRef.current) return;
-            if(xPos <= 0) {
+            if (!basketRef || !basketRef.current) return;
+            if (xPos <= 0) {
                 setMoveDirection('right');
-            } else if(xPos >= window.innerWidth - basketRef.current.clientWidth) {
+            } else if (xPos >= window.innerWidth - basketRef.current.clientWidth) {
                 setMoveDirection('left');
             }
 
@@ -75,13 +80,18 @@ const Basket = (props: any, ref: any) => {
         [currentCharacter]);
 
     return (
-        <Container ref={basketRef} style={{
-            transform: `translate3d(${xPos}px, 0, 0)`
-        }}>
-            <HitRange ref={ref} />
-            <BasketImage src={basketImage} alt='' />
-            <CharacterImage src={charImage} style={currentCharacter.customHoldStyle} />
-        </Container>
+        <div>
+            <Container ref={basketRef} style={{
+                transform: `translate3d(${xPos}px, 0, 0)`
+            }}>
+                <HitRange ref={ref} />
+                <BasketImage src={basketImage} alt='' />
+            </Container>
+            <CharacterImage src={charImage} style={{
+                transform: `translate3d(${xPos}px, 0, 0)`,
+                ...currentCharacter.customHoldStyle
+            }} />
+        </div>
     )
 }
 
